@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Inventory\Inventory.csproj" />
+    <ProjectReference Include="${workspaceFolder}\src\Inventory\Inventory.csproj" />
   </ItemGroup>
 
 </Project>

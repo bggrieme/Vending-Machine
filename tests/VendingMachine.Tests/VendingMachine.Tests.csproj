@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="${workspaceFolder}/src/VendingMachine/VendingMachine.csproj" />
+    <ProjectReference Include="../../src/VendingMachine/VendingMachine.csproj" />
   </ItemGroup>
 
 </Project>

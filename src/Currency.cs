@@ -1,9 +1,10 @@
 
+/*Enum representing values of different US currencies in cents*/
 public enum Currency
 {
-    Penny = .01,
-    Nickel = .05,
-    Dime = .10,
-    Quarter = .25,
-    Dollar = 1.00
+    Penny = 1,
+    Nickel = 5,
+    Dime = 10,
+    Quarter = 25,
+    Dollar = 100
 }

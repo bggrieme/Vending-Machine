@@ -1,4 +1,4 @@
-using System.Collections.Generic; //EqualityComparer
+using System.Collections.Generic; //Dictionary
 
 namespace CustomCollection
 {
@@ -57,7 +57,7 @@ namespace CustomCollection
         /*Nulls the given x,y slot*/
         public void deleteAt(int x, int y)
         {
-
+            
         }
 
         /*Swaps the given x,y with the given x1,y1*/

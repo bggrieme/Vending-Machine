@@ -2,7 +2,8 @@ using System.Collections.Generic; //dictionary
 
 public class Till
 {
-    private Dictionary<Currency, int> bank, defaultBank; //tracks spent currency
+    public Dictionary<Currency, int> bank {get; private set;}
+    public Dictionary<Currency, int> defaultBank {get; private set;}
     public decimal holdings{get; private set;} //stores the balance of currency added but not yet spent
 
     

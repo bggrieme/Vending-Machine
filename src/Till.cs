@@ -12,26 +12,31 @@ public class Till
         
     }
 
-    /*Resets the bank to the originally constructed defaultBank*/
+    /*Resets the bank to the originally constructed defaultBank, zeroes holdings*/
     public void resetBank()
     {
 
     }
 
-    /*Inserts currency into the system, adding it to the bank and counting its value into a temporary holding*/
-    public void insertMoney(Currency c)
+    /*Checks to see if the till can make change for the given currency. 
+    If it can, adds the currency to the bank, increases holdings, and returns true.
+        recursively repeats this until it either returns false or quantity <= 0
+    If it can not, returns false.*/
+    public bool insertMoney(Currency c, int quantity = 1)
     {
 
+        return true;
     }
 
-    /*Empties the temporary holdings bank, returning each piece of currency*/
-    public Currency returnHolding()
+    /*Returns currency equivalent to the holdings value using the least change possible*/
+    public Dictionary<Currency, int> returnHolding()
     {
-        return Currency.PENNY;
+        Dictionary<Currency, int> refund = new Dictionary<Currency, int>();
+        return refund;
     }
 
-    /*Deducts the value of the given item from the holdings bank*/
-    public void transaction(VendingItem item)
+    /*Deducts the value from the holdings bank*/
+    public void spend(decimal value)
     {
 
     }
@@ -40,11 +45,5 @@ public class Till
     private bool canMakeChange()
     {
         return true;
-    }
-
-    /*Returns the last currency added*/
-    private Currency rejectInserted()
-    {
-        return Currency.PENNY;
     }
 }

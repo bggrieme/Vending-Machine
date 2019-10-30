@@ -69,9 +69,7 @@ public class TillTests
     {
         till = new Till(getNewBank(0,0,0,0,0)); //new till with completely empty bank
         till.insertMoney(c);
-        int[] values = new int[5];
-        till.bank.Values.CopyTo(values, 0);
-        Assert.True(values[] == 0); //TODO
+        Assert.True(till.bank.GetValueOrDefault(c) == 0);
     }
 
     /*Attempts to add currency with a populated bank that should be able to make change*/

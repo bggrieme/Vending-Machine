@@ -3,18 +3,7 @@ using Xunit;
 
 public class TillTests
 {
-    static Dictionary<Currency, int> getNewBank(int pennies, int nickels, int dimes, int quarters, int dollars)
-    {
-        Dictionary<Currency, int> defaultBank = new Dictionary<Currency, int>();
-        defaultBank.Add(Currency.PENNY, pennies);
-        defaultBank.Add(Currency.NICKEL, nickels);
-        defaultBank.Add(Currency.DIME, dimes);
-        defaultBank.Add(Currency.QUARTER, quarters);
-        defaultBank.Add(Currency.DOLLAR, dollars);
-        return defaultBank;
-    }
-    static Dictionary<Currency, int> defaultBank = getNewBank(200,150,100,50,0);
-    Till till = new Till(defaultBank);
+    Till till = new Till(200,150,100,50,0);
 
     [Fact (DisplayName = "Inserting $1 should set holdings to 1.00")]
     public void insertDollar_holdings_should_equal_1_00()
@@ -40,7 +29,7 @@ public class TillTests
     {
         till.insertMoney(Currency.DOLLAR, 5); //adds money to ensure a non-default state of the bank
         till.resetBank();
-        Assert.True(till.bank.Values == defaultBank.Values);
+        Assert.True(till.bank.Values == till.defaultBank.Values);
     }
 
     [Fact (DisplayName = "till.holdings should == 0 after reset")]
@@ -67,7 +56,7 @@ public class TillTests
     [InlineData (Currency.DOLLAR)]
     public void reject_money_because_no_change_emptyBank(Currency c)
     {
-        till = new Till(getNewBank(0,0,0,0,0)); //new till with completely empty bank
+        till = new Till(0,0,0,0,0); //new till with completely empty bank
         till.insertMoney(c);
         Assert.True(till.bank.GetValueOrDefault(c) == 0);
     }
@@ -81,7 +70,7 @@ public class TillTests
     [InlineData(Currency.DOLLAR, 25, 1, 2, 2)]
     public void should_accept_currency_because_can_make_change(Currency c, int pennies = 0, int nickels = 0, int dimes = 0, int quarters = 0, int dollars = 0)
     {
-        till = new Till(getNewBank(pennies, nickels, dimes, quarters, dollars));
+        till = new Till(pennies, nickels, dimes, quarters, dollars);
         int startingCount = till.bank.GetValueOrDefault(c);
         till.insertMoney(c);
         Assert.True(till.bank.GetValueOrDefault(c) == startingCount+1);
@@ -91,7 +80,7 @@ public class TillTests
     [Fact(DisplayName = "Reject Dollar because can't make exact change despite > 1.00 value in bank")]
     public void reject_input_cause_no_exact_change()
     {
-        till = new Till(getNewBank(0,0,9,1,0)); //total value = 1.15, but 9 dimes and 1 quarter cannot break a dollar
+        till = new Till(0,0,9,1,0); //total value = 1.15, but 9 dimes and 1 quarter cannot break a dollar
         Assert.False(till.insertMoney(Currency.DOLLAR));
     }
 

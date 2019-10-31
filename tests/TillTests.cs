@@ -44,48 +44,61 @@ public class TillTests
     public void spend_75c_from_oneDollar_return_25c()
     {
         till.insertMoney(Currency.DOLLAR);
-        till.spend(0.75m);
-        Assert.True(till.holdings == 0.25m);
+        till.spend(75);
+        Assert.True(till.holdings == 25);
+    }
+
+    [Fact (DisplayName = "Attempting to spend more than holdings should leave bank and holdings unchanged.")]
+    public void attempt_spend_more_than_holdings()
+    {
+        till = new Till(0,0,0,0,0);
+        till.insertMoney(Currency.QUARTER);
+        till.spend(50);
+        Assert.True(till.bank[Currency.QUARTER] == 1 && till.holdings == 25);
     }
 
     /*attempts to add one of each type of Currency (minus PENNY, because the till can always "make change" for an inserted penny) to till, which should fail due to till.bank being completely empty.*/
-    [Theory (DisplayName = "Should reject inserted money due to inability to make change for it.")]
+    [Theory (DisplayName = "Should be unable to make change because the bank is empty.")]
+    [InlineData (Currency.PENNY)]
     [InlineData (Currency.NICKEL)]
     [InlineData (Currency.DIME)]
     [InlineData (Currency.QUARTER)]
     [InlineData (Currency.DOLLAR)]
-    public void reject_money_because_no_change_emptyBank(Currency c)
+    public void Should_be_unable_to_make_change_because_empty_bank(Currency c)
     {
         till = new Till(0,0,0,0,0); //new till with completely empty bank
-        till.insertMoney(c);
-        Assert.True(till.bank.GetValueOrDefault(c) == 0);
+        Assert.False(till.canMakeChange((int)c));
     }
 
-    /*Attempts to add currency with a populated bank that should be able to make change*/
-    [Theory (DisplayName = "Added currency to bank should be accepted")]
-    [InlineData(Currency.PENNY)] //should always be accepted
-    [InlineData(Currency.NICKEL, 5)]
-    [InlineData(Currency.DIME, 5, 1)]
-    [InlineData(Currency.QUARTER, 10, 1, 1)]
-    [InlineData(Currency.DOLLAR, 25, 1, 2, 2)]
-    public void should_accept_currency_because_can_make_change(Currency c, int pennies = 0, int nickels = 0, int dimes = 0, int quarters = 0, int dollars = 0)
+    /*Checks if exact change can be made for several given values - this block should be able to make change*/
+    [Theory (DisplayName = "Should be able to make exact change")]
+    [InlineData (10, 5, 1)] //10cents from: 5 pennies, 1 nickel
+    [InlineData (15, 0, 1, 1)] //15cents from: 1 nickel, 1 dime
+    [InlineData (33, 3, 1, 0, 1)] //33cents from: 3 pennies, 1 nickel, 1 quarter
+    [InlineData (75, 25, 0, 0, 2)] //75cents from: 25 pennies, 2 quarters
+    [InlineData (399, 9, 16, 1, 0, 3)] //399cents from: 9 pennies, 16 nickels, 1 dime, 3 dollars
+    [InlineData(501, 1, 1, 1, 1, 5)] //501cents from: 1 penny, 5 dollars
+    [InlineData(1, 1)]//1cent from: 1 penny
+    public void canMakeChange_should_return_true(int value, int pennies = 0, int nickels = 0, int dimes = 0, int quarters = 0, int dollars = 0)
     {
         till = new Till(pennies, nickels, dimes, quarters, dollars);
-        int startingCount = till.bank.GetValueOrDefault(c);
-        till.insertMoney(c);
-        Assert.True(till.bank.GetValueOrDefault(c) == startingCount+1);
+        Assert.True(till.canMakeChange(value));
     }
 
-    /*Attempts to add a dollar when bank value is > 1.00 BUT current bank is unable to return 1.00 exactly - should reject dollar*/
-    [Fact(DisplayName = "Reject Dollar because can't make exact change despite > 1.00 value in bank")]
-    public void reject_input_cause_no_exact_change()
+    /*Checks if exact change can be made for several given values - this block should NOT be able to make change*/
+    [Theory (DisplayName = "Should NOT be able to make exact change")]
+    [InlineData (10, 4, 1)]
+    [InlineData (10, 9, 0, 0, 1)]
+    [InlineData (30, 0, 0, 1, 1)]
+    [InlineData (73, 2, 100, 100, 100, 100)]
+    [InlineData (101, 0, 0, 0, 1, 1)]
+    [InlineData (0, 1, 1, 1, 1, 1)]
+    [InlineData (-25, 9, 78, 65, 1, 15)]
+    [InlineData (int.MaxValue, 789, 456, 1231, 158, 48)]
+    [InlineData (int.MinValue, int.MaxValue, int.MaxValue, int.MaxValue, int.MaxValue, int.MaxValue)]
+    public void canMakeChange_should_return_false(int value, int pennies = 0, int nickels = 0, int dimes = 0, int quarters = 0, int dollars = 0)
     {
-        till = new Till(0,0,9,1,0); //total value = 1.15, but 9 dimes and 1 quarter cannot break a dollar
-        Assert.False(till.insertMoney(Currency.DOLLAR));
+        till = new Till(pennies, nickels, dimes, quarters, dollars);
+        Assert.False(till.canMakeChange(value));
     }
-
-    
-
-
-
 }

@@ -3,25 +3,27 @@ using Xunit;
 
 public class TillTests
 {
-    Till till = new Till(200,150,100,50,0);
+    Till till = new Till(0,0,0,0,0);
 
-    [Fact (DisplayName = "Inserting $1 should set holdings to 1.00")]
-    public void insertDollar_holdings_should_equal_1_00()
+    [Fact (DisplayName = "Inserting $1 should set holdings to 100")]
+    public void insertDollar_holdings_should_equal_100()
     {
         till.insertMoney(Currency.DOLLAR);
-        Assert.True(till.holdings == (decimal)1.00);
+        Assert.True(till.holdings == 100, "Holdings should == 100. Actual value: " + till.holdings);
     }
 
     [Fact (DisplayName = "Till.bank dollar balance should be 1")]
     public void bank_balance_check()
     {
-        Assert.True(till.bank.GetValueOrDefault(Currency.DOLLAR) == 1);
+        till.insertMoney(Currency.DOLLAR);
+        Assert.True(till.bank[Currency.DOLLAR] == 1, "till.bank should hold 1 dollar. Actual dollar count: " + till.bank[Currency.DOLLAR]);
     }
 
-    [Fact (DisplayName = "returnHolding should produce 1 dollar")]
+    [Fact (DisplayName = "returnHolding dictionary should contain 1 dollar")]
     public void return_dollar()
     {
-        Assert.True(till.returnHolding().GetValueOrDefault(Currency.DOLLAR) == 1);
+        till.insertMoney(Currency.DOLLAR);
+        Assert.True(till.returnHolding()[Currency.DOLLAR] == 1);
     }
 
     [Fact (DisplayName = "Should reset bank to argument given in constructor")]

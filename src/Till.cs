@@ -3,23 +3,24 @@ using System.Collections.Generic; //dictionary
 
 public class Till
 {
+    private Currency[] arr_Currency = (Currency[])Enum.GetValues(typeof(Currency));
+    private Dictionary<Currency, int> changeBank; //a reference bank that stores the number of each currency needed to make proper change
     public Dictionary<Currency, int> bank { get; private set; } //stores the number of each Currency held in the Till
     public Dictionary<Currency, int> defaultBank { get; private set; } //the state of the bank when constructed
     public int holdings { get; private set; } //stores the balance of currency added but not yet spent, in cents
-    private Dictionary<Currency, int> changeBank; //a reference bank that stores the number of each currency needed to make proper change
-    private Currency[] arr_Currency = (Currency[])Enum.GetValues(typeof(Currency));
 
     public Till(int startingPENNIES, int startingNICKELS, int startingDIMES, int startingQUARTERS, int startingDOLLARS)
     {
-        int[] startingCounts = new int[] {startingPENNIES, startingNICKELS, startingDIMES, startingQUARTERS, startingDOLLARS};
-        this.defaultBank = new Dictionary<Currency, int>();        
-        for(int i = 0; i < arr_Currency.Length; i++)
+        int[] startingCounts = new int[] { startingPENNIES, startingNICKELS, startingDIMES, startingQUARTERS, startingDOLLARS };
+        this.defaultBank = new Dictionary<Currency, int>();
+        this.bank = new Dictionary<Currency, int>();
+        this.changeBank = new Dictionary<Currency, int>();
+        for (int i = 0; i < arr_Currency.Length; i++)
         {
             this.defaultBank.Add(arr_Currency[i], startingCounts[i]);
+            this.bank.Add(arr_Currency[i], startingCounts[i]);
+            this.changeBank.Add(arr_Currency[i], 0);
         }
-        this.bank = this.defaultBank;
-        this.changeBank = this.bank;
-        zero_bank(ref this.changeBank); //zero all Values in changeBank, retaining Keys
     }
 
     /*Resets the bank to the originally constructed defaultBank, zeroes holdings*/
@@ -33,14 +34,22 @@ public class Till
     public void insertMoney(Currency c, int quantity = 1)
     {
         this.bank[c] += quantity;
-        this.holdings += (int)c;
+        this.holdings += (int)c*quantity;
     }
 
-    /*Returns currency equivalent to the holdings value using the least change possible*/
+    /*Refunds currency equivalent to the holdings value using the least change possible.*/
     public Dictionary<Currency, int> returnHolding()
     {
-        Dictionary<Currency, int> refund = this.changeBank;
-        //TODO
+        canMakeChange(this.holdings); //updates changeBank
+        Dictionary<Currency, int> refund = new Dictionary<Currency, int>();
+        foreach(KeyValuePair<Currency, int> kvp in this.changeBank) //copy this.changeBank values into the new refund Dictionary
+        {
+            refund.Add(kvp.Key, kvp.Value);
+        }
+        foreach (Currency key in this.arr_Currency) //withdraw all currencies held within this.changeBank from this.bank
+        {
+            this.bank[key] -= this.changeBank[key];
+        }
         this.holdings = 0;
         return refund;
     }
@@ -64,9 +73,10 @@ public class Till
     {
         int value = val_in_cents;
         int[] arr_currencyCounts = new int[this.bank.Count];
-        for(int i = this.arr_Currency.Length-1; i >= 0; i--) //iterate through an array containing each Currency from back to front.
+        for (int i = this.arr_Currency.Length - 1; i >= 0; i--) //iterate through an array containing each Currency from back to front.
         {
             calculateChange(ref value, this.arr_Currency[i], ref arr_currencyCounts[i]);
+            this.changeBank[this.arr_Currency[i]] = arr_currencyCounts[i]; //update changeBank for use in returnHolding()
         }
         if (value == 0)
         {
@@ -81,17 +91,17 @@ public class Till
         /*while the value is greater than the value of the currency &&
         the number of the currency needed is less than what the bank has,
         subtract the value of the currency from the value to be returned and increase the count of the currency needed*/
-        while(value > (int)c && num_Currency_needed < bank[c])
+        while (value >= (int)c && num_Currency_needed < bank[c])
         {
             value -= (int)c;
             num_Currency_needed++;
-        }        
+        }
     }
 
     /*Helper method. Zeroes all Values in the given Dictionary's key-value pairs. Doesn't change Keys*/
     private void zero_bank(ref Dictionary<Currency, int> dict)
     {
-        foreach(Currency key in this.arr_Currency)
+        foreach (Currency key in this.arr_Currency)
         {
             dict[key] = 0;
         }

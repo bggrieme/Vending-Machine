@@ -94,7 +94,6 @@ public class TillTests
     [InlineData (30, 0, 0, 1, 1)]
     [InlineData (73, 2, 100, 100, 100, 100)]
     [InlineData (101, 0, 0, 0, 1, 1)]
-    [InlineData (0, 1, 1, 1, 1, 1)]
     [InlineData (-25, 9, 78, 65, 1, 15)]
     [InlineData (int.MaxValue, 789, 456, 1231, 158, 48)]
     [InlineData (int.MinValue, int.MaxValue, int.MaxValue, int.MaxValue, int.MaxValue, int.MaxValue)]

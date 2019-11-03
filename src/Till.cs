@@ -1,21 +1,25 @@
+using System; //Enum.
 using System.Collections.Generic; //dictionary
 
 public class Till
 {
-    public Dictionary<Currency, int> bank { get; private set; }
+    public Dictionary<Currency, int> bank { get; private set; } //stores the number of each Currency held in the Till
     public Dictionary<Currency, int> defaultBank { get; private set; } //the state of the bank when constructed
     public int holdings { get; private set; } //stores the balance of currency added but not yet spent, in cents
-
+    private Dictionary<Currency, int> changeBank; //a reference bank that stores the number of each currency needed to make proper change
+    private Currency[] arr_Currency = (Currency[])Enum.GetValues(typeof(Currency));
 
     public Till(int startingPENNIES, int startingNICKELS, int startingDIMES, int startingQUARTERS, int startingDOLLARS)
     {
-        this.defaultBank = new Dictionary<Currency, int>();
-        this.defaultBank.Add(Currency.PENNY, startingPENNIES);
-        this.defaultBank.Add(Currency.NICKEL, startingNICKELS);
-        this.defaultBank.Add(Currency.DIME, startingDIMES);
-        this.defaultBank.Add(Currency.QUARTER, startingQUARTERS);
-        this.defaultBank.Add(Currency.DOLLAR, startingDOLLARS);
+        int[] startingCounts = new int[] {startingPENNIES, startingNICKELS, startingDIMES, startingQUARTERS, startingDOLLARS};
+        this.defaultBank = new Dictionary<Currency, int>();        
+        for(int i = 0; i < arr_Currency.Length; i++)
+        {
+            this.defaultBank.Add(arr_Currency[i], startingCounts[i]);
+        }
         this.bank = this.defaultBank;
+        this.changeBank = this.bank;
+        zero_bank(ref this.changeBank); //zero all Values in changeBank, retaining Keys
     }
 
     /*Resets the bank to the originally constructed defaultBank, zeroes holdings*/
@@ -25,46 +29,71 @@ public class Till
         holdings = 0;
     }
 
-    /*Checks to see if the till can make change for the given currency. 
-    If it can, adds the currency to the bank, increases holdings, and returns true.
-        recursively repeats this until it either returns false or quantity <= 0
-    If it can not, returns false.*/
-    public bool insertMoney(Currency c, int quantity = 1)
+    /*Adds the given currency to till's bank. Increases the till's holdings value appropriately.*/
+    public void insertMoney(Currency c, int quantity = 1)
     {
-        if (!canMakeChange(c) || quantity <= 0) //if till cannot make change for the currency or the quantity <=0
-        {
-            return false;
-        }
-        else
-        {
-            this.bank[c] += 1; //increment the bank's count for the given currency (thus accepting it into the bank)
-            this.holdings += (int)c;
-            return insertMoney(c, quantity - 1);
-        }
+        this.bank[c] += quantity;
+        this.holdings += (int)c;
     }
 
     /*Returns currency equivalent to the holdings value using the least change possible*/
     public Dictionary<Currency, int> returnHolding()
     {
-        int tempHoldings = this.holdings;
-        int pennies, nickels, dimes, quarters, dollars;
-        Dictionary<Currency, int> refund = new Dictionary<Currency, int>();
+        Dictionary<Currency, int> refund = this.changeBank;
         //TODO
-
         this.holdings = 0;
         return refund;
     }
 
-    /*Deducts the value from holdings*/
-    public void spend(int val_in_cents)
+    /*If holdings is less than the argument, returns false. Otherwise deducts the argument from holdings and returns true.*/
+    public bool spend(int val_in_cents)
     {
-
+        if (this.holdings < val_in_cents)
+        {
+            return false;
+        }
+        else
+        {
+            this.holdings -= val_in_cents;
+            return true;
+        }
     }
 
-    /*Checks to make sure the system can make change for any currency given*/
-    private bool canMakeChange(Currency c)
+    /*Returns true if exact change can be made for the given value. Returns false otherwise.*/
+    public bool canMakeChange(int val_in_cents)
     {
-        
-        return true;
+        int value = val_in_cents;
+        int[] arr_currencyCounts = new int[this.bank.Count];
+        for(int i = this.arr_Currency.Length-1; i >= 0; i--) //iterate through an array containing each Currency from back to front.
+        {
+            calculateChange(ref value, this.arr_Currency[i], ref arr_currencyCounts[i]);
+        }
+        if (value == 0)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    /*Helper method. Calculates how much of the given currency is required to make change for the given value (not exceeding what the bank actually has).*/
+    private void calculateChange(ref int value, Currency c, ref int num_Currency_needed)
+    {
+        /*while the value is greater than the value of the currency &&
+        the number of the currency needed is less than what the bank has,
+        subtract the value of the currency from the value to be returned and increase the count of the currency needed*/
+        while(value > (int)c && num_Currency_needed < bank[c])
+        {
+            value -= (int)c;
+            num_Currency_needed++;
+        }        
+    }
+
+    /*Helper method. Zeroes all Values in the given Dictionary's key-value pairs. Doesn't change Keys*/
+    private void zero_bank(ref Dictionary<Currency, int> dict)
+    {
+        foreach(Currency key in this.arr_Currency)
+        {
+            dict[key] = 0;
+        }
     }
 }

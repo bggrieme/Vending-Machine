@@ -1,75 +1,78 @@
-using System.Collections.Generic; //Dictionary
+using System.Collections.Generic;
 
-namespace CustomCollection
+public class Inventory
 {
-    /*A basic grid-based collection*/
-    public class Inventory<T>
+    public struct slot
     {
-        public T[][] inv { get; private set; } //an array of Type arrays
-        public Inventory(int width, int height)
+        public VendingItem item;
+        public int quantity;
+        public slot(VendingItem givenItem, int givenQuantity = 0)
         {
-            inv = new T[width][];
-            for (int i = 0; i < width; i++)
-            {
-                inv[i] = new T[height];
-            }
+            item = givenItem;
+            quantity = givenQuantity;
         }
+    }
+    private slot[,] inv;
 
-        /*Returns whatever is held at the given slot. Doesn't modify the inventory.*/
-        public T peekSlot(int x, int y)
+
+    public Inventory(int width, int height)
+    {
+        this.inv = new slot[width, height];
+    }
+
+    /*Returns the item held at the given slot location. Doesn't modify the inventory.*/
+    public slot peekSlot(int x, int y)
+    {
+        return inv[x, y];
+    }
+
+    /*If given location is unoccupied, sets the given (x, y) location to hold the given quantity of the given item
+    If a quantity < 0 is given, the quantity will be adjusted to 0
+    Returns true if successfully inserted, false otherwise.*/
+    public bool insertNew(VendingItem item, int quantity, int x, int y)
+    {
+        if ((inv[x,y].item == default(VendingItem)))
         {
-            return inv[x][y];
+            this.inv[x, y] = new slot(item);
+            this.adjustStock(quantity, x, y); //easy way of disallowing inserting a new item with a quantity of -x
+            return true;
         }
-
-        /*Attempts to insert the given item at the given x,y coordinate
-        Returns true if inserted successfully, false otherwise*/
-        public bool insertAt(T item, int x, int y)
+        else
         {
-            if (EqualityComparer<T>.Default.Equals(inv[x][y], default(T))) //if inventory[x][y] == whatever the default value for T is [which it will if [x][y] is empty]
-            {
-                /* TODO there is either something wrong with this if statement, or the InventoryTest insertatOccupied() has an error
-                 main() tests show insertAt() working as expected, though.. so I'm at a loss here.*/
-                inv[x][y] = item;
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return false;
         }
+    }
 
-        /*Temporarily stores the item at x,y. Nulls x,y. Returns whatever was there.*/
-        public T removeAt(int x, int y)
+    /*Sets the given (x, y) location to an empty slot*/
+    public void clearSlot(int x, int y)
+    {
+        inv[x, y] = default(slot);
+    }
+
+    /*Returns a single item from the given [x][y]. 
+    Throws an error if there is no item to dispense at the given location.*/
+    public VendingItem dispense(int x, int y)
+    {
+        if (inv[x, y].item == default(VendingItem) || inv[x, y].quantity <= 0)
         {
-            if (EqualityComparer<T>.Default.Equals(inv[x][y], default(T))) //if [x][y] == whatever default T is
-            {
-                return default(T);
-            }
-            else
-            {
-                T temp = inv[x][y];
-                inv[x][y] = default(T);
-                return temp;
-            }
+            throw new System.Exception("System shows no product available to dispense.");
         }
+        inv[x, y].quantity--;
+        return inv[x, y].item;
+    }
 
-
-        /*Nulls the given x,y slot*/
-        public void deleteAt(int x, int y)
+    /*Sets the quantity of the item held at (x, y) to the given quantity. If the given quantity is less than zero, will default to zero.*/
+    public void adjustStock(int quantity, int x, int y)
+    {
+        if (inv[x, y].item == default(VendingItem))
         {
-            
+            throw new System.Exception("System shows no product at the location. Add a new product first.");
         }
-
-        /*Swaps the given x,y with the given x1,y1*/
-        public void swap(int x, int y, int x1, int y1)
+        if (quantity < 0)
         {
-
+            quantity = 0;
         }
+        inv[x, y].quantity = quantity;
 
-        /*Returns a string representation of the contents.*/
-        public string toString()
-        {
-            return "";
-        }
     }
 }

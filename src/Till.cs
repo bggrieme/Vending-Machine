@@ -78,11 +78,7 @@ public class Till
             calculateChange(ref value, this.arr_Currency[i], ref arr_currencyCounts[i]);
             this.changeBank[this.arr_Currency[i]] = arr_currencyCounts[i]; //update changeBank for use in returnHolding()
         }
-        if (value == 0)
-        {
-            return true;
-        }
-        return false;
+        return value == 0;
     }
 
     /*Helper method. Calculates how much of the given currency is required to make change for the given value (not exceeding what the bank actually has).*/

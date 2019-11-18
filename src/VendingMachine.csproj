@@ -1,9 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.2</TargetFramework>
   </PropertyGroup>
-
+  <ItemGroup>
+    <Content Include="Program.cs" />
+    <Content Include="Inventory.cs" />
+    <Content Include="Till.cs" />
+    <Content Include="Currency.cs" />
+    <Content Include="VendingMachine.cs" />
+    <Content Include="VendingItem.cs" />
+  </ItemGroup>
 </Project>
-

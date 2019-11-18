@@ -61,6 +61,12 @@ public class Inventory
         inv[x, y] = default(slot);
     }
 
+    /*Clears all slots in the inventory*/
+    public void clearAllSlots()
+    {
+        this.inv = new slot[this.inv.GetLength(0), this.inv.GetLength(1)]; //sets this.inv to a new instance of slot[,] with the same dimensions as initially constructed
+    }
+
     /*Returns a single item from the given [x][y]. 
     Throws an error if there is no item to dispense at the given location.*/
     public VendingItem dispense(int x, int y)

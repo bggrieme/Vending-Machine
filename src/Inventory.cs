@@ -20,10 +20,22 @@ public class Inventory
         this.inv = new slot[width, height];
     }
 
-    /*Returns the item held at the given slot location. Doesn't modify the inventory.*/
+    /*Returns the slot struct at the given location. Doesn't modify the inventory.*/
     public slot peekSlot(int x, int y)
     {
         return inv[x, y];
+    }
+
+    /*Returns the item held at the given location.*/
+    public VendingItem peekItem(int x, int y)
+    {
+        return inv[x, y].item;
+    }
+
+    /*Returns the quantity of whatever is held at the given location.*/
+    public int peekQuantity(int x, int y)
+    {
+        return inv[x, y].quantity;
     }
 
     /*If given location is unoccupied, sets the given (x, y) location to hold the given quantity of the given item

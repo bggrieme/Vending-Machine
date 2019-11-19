@@ -11,12 +11,15 @@ public class Inventory
             item = givenItem;
             quantity = givenQuantity;
         }
-    }
+    }    
     private slot[,] inv;
-
+    public int width {get; private set;}
+    public int height {get; private set;}
 
     public Inventory(int width, int height)
     {
+        this.width = width;
+        this.height = height;
         this.inv = new slot[width, height];
     }
 
@@ -64,7 +67,7 @@ public class Inventory
     /*Clears all slots in the inventory*/
     public void clearAllSlots()
     {
-        this.inv = new slot[this.inv.GetLength(0), this.inv.GetLength(1)]; //sets this.inv to a new instance of slot[,] with the same dimensions as initially constructed
+        this.inv = new slot[this.width, this.height];
     }
 
     /*Returns a single item from the given [x][y]. 
@@ -91,6 +94,5 @@ public class Inventory
             quantity = 0;
         }
         inv[x, y].quantity = quantity;
-
     }
 }

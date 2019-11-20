@@ -49,7 +49,8 @@ public class Inventory
         if ((inv[x,y].item == default(VendingItem)))
         {
             this.inv[x, y] = new slot(item);
-            this.adjustStock(quantity, x, y); //easy way of disallowing inserting a new item with a quantity of -x
+            this.setQuantity
+    (quantity, x, y); //easy way of disallowing inserting a new item with a quantity of -x
             return true;
         }
         else
@@ -83,7 +84,7 @@ public class Inventory
     }
 
     /*Sets the quantity of the item held at (x, y) to the given quantity. If the given quantity is less than zero, will default to zero.*/
-    public void adjustStock(int quantity, int x, int y)
+    public void setQuantity(int quantity, int x, int y)
     {
         if (inv[x, y].item == default(VendingItem))
         {

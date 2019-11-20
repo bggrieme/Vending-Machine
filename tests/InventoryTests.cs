@@ -45,7 +45,7 @@ public class InventoryTests
     public void adjust_quantity_of_occupied_slot(int quantity)
     {
         inventory.insertNew(item1, 999, 0, 0);
-        inventory.adjustStock(quantity, 0, 0);
+        inventory.setQuantity(quantity, 0, 0);
         Assert.True(inventory.peekSlot(0,0).quantity == quantity);
     }
 
@@ -56,7 +56,7 @@ public class InventoryTests
     public void adjust_quantity_to_subZero_shouldGet_zero(int quantity)
     {
         inventory.insertNew(item2, 999, 0, 0);
-        inventory.adjustStock(quantity, 0, 0);
+        inventory.setQuantity(quantity, 0, 0);
         Assert.True(inventory.peekSlot(0,0).quantity == 0);
     }
 
@@ -101,12 +101,13 @@ public class InventoryTests
     {
         bool ex_Thrown = false;
         try{
-            inventory.adjustStock(5, 0,0);
+            inventory.setQuantity(5, 0,0);
         }catch(System.Exception){
             ex_Thrown = true;
         }
         Assert.True(ex_Thrown, "Exception not thrown when it should have been.");
     }
+    
 
 }
 

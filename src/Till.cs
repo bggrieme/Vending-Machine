@@ -93,13 +93,4 @@ public class Till
             num_Currency_needed++;
         }
     }
-
-    /*Helper method. Zeroes all Values in the given Dictionary's key-value pairs. Doesn't change Keys*/
-    private void zero_bank(ref Dictionary<Currency, int> dict)
-    {
-        foreach (Currency key in this.arr_Currency)
-        {
-            dict[key] = 0;
-        }
-    }
 }

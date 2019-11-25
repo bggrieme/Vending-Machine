@@ -9,6 +9,7 @@ public class VendingItem
     {
         this.name = givenName;
         this.price = Decimal.Round(givenPrice, 2); //rounds givenPrice to 2 decimal places
+        this.price += 0.00m; //forces sig figs.
     }
 
     public void setPrice(decimal newPrice)

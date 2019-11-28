@@ -2,29 +2,32 @@ using System.Collections.Generic;
 
 public class Inventory
 {
-    public struct slot
-    {
-        public VendingItem item;
-        public int quantity;
-        public slot(VendingItem givenItem, int givenQuantity = 0)
-        {
-            item = givenItem;
-            quantity = givenQuantity;
-        }
-    }
-    private slot[,] inv;
+
+    private Slot[,] inv;
     public int width { get; private set; }
     public int height { get; private set; }
 
-    public Inventory(int width, int height)
+    /*Constructor. Inventory dimensions must be provided. Can optionally include an array of Slots to populate the inventory with.
+    Populates starting at the top left corner of the inventory, left-to-right top-to-bottom (like how English is written/read).
+    Will sequentially pull elements from the given array until the array is empty or the inventory is full.*/
+    public Inventory(int width, int height, Slot[] initialSlots = null)
     {
         this.width = width;
         this.height = height;
-        this.inv = new slot[width, height];
+        this.inv = new Slot[width, height];
+        int index = 0;
+        for (int y = height - 1; y >= 0; y--)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                this.inv[x,y] = (initialSlots != null && initialSlots.Length > index) ? initialSlots[index] : new Slot(null, 0);
+                index++;
+            }
+        }
     }
 
-    /*Returns the slot struct at the given location. Doesn't modify the inventory.*/
-    public slot peekSlot(int x, int y)
+    /*Returns the Slot at the given location. Doesn't modify the inventory.*/
+    public Slot peekSlot(int x, int y)
     {
         return inv[x, y];
     }
@@ -48,7 +51,7 @@ public class Inventory
     {
         if ((inv[x, y].item == default(VendingItem)))
         {
-            this.inv[x, y] = new slot(item);
+            this.inv[x, y] = new Slot(item);
             this.setQuantity(quantity, x, y); //easy way of disallowing inserting a new item with a quantity of -x
             return true;
         }
@@ -57,17 +60,21 @@ public class Inventory
             return false;
         }
     }
+    public bool insertNew(Slot newSlot, int x, int y)
+    {
+        return this.insertNew(newSlot.item, newSlot.quantity, x, y);
+    }
 
-    /*Sets the given (x, y) location to an empty slot*/
+    /*Sets the given (x, y) location to an empty Slot*/
     public void clearSlot(int x, int y)
     {
-        inv[x, y] = default(slot);
+        inv[x, y] = new Slot(null, 0);
     }
 
     /*Clears all slots in the inventory*/
     public void clearAllSlots()
     {
-        this.inv = new slot[this.width, this.height];
+        this.inv = new Slot[this.width, this.height];
     }
 
     /*Returns a single item from the given [x][y]. 
@@ -96,12 +103,12 @@ public class Inventory
         inv[x, y].quantity = quantity;
     }
 
-    /*Produces a text-based graphical representation of the given inventory slot.
+    /*Produces a text-based graphical representation of the given inventory Slot.
     Really only intended for demo purposes.*/
     public string stringGUI(int cellWidth = 12)
     {
         string s_inv = "";
-        for (int i = 0; i <= (cellWidth-1) * this.width; i++) //top border
+        for (int i = 0; i <= (cellWidth - 1) * this.width; i++) //top border
         {
             s_inv += "-";
         }
@@ -111,14 +118,14 @@ public class Inventory
             stringGUI_buildRow(ref s_inv, cellWidth, h, "QUANTITY");
             stringGUI_buildRow(ref s_inv, cellWidth, h, "PRICE");
             s_inv += "\n|";
-            for (int w = 0; w < this.width; w++) //slot grid location
+            for (int w = 0; w < this.width; w++) //Slot grid location
             {
                 string location = "[" + w + ", " + h + "]";
-                location = location.PadLeft((cellWidth-2-location.Length)/2 + location.Length).PadRight(cellWidth-2); //this beautifully center-aligns the location string within the cell. Formula is basically: (availableSpace - locationStringLength) / 2 + locationStringLength, then simply padRight(availableSpace)
+                location = location.PadLeft((cellWidth - 2 - location.Length) / 2 + location.Length).PadRight(cellWidth - 2); //this beautifully center-aligns the location string within the cell. Formula is basically: (availableSpace - locationStringLength) / 2 + locationStringLength, then simply padRight(availableSpace)
                 s_inv += location + "|";
             }
             s_inv += "\n";
-            for (int i = 0; i <= (cellWidth-1) * this.width; i++) //bottom border
+            for (int i = 0; i <= (cellWidth - 1) * this.width; i++) //bottom border
             {
                 s_inv += "-";
             }
@@ -129,7 +136,7 @@ public class Inventory
     private void stringGUI_buildRow(ref string s_inv, int cellWidth, int h, string dataDesignation)
     {
         string validationString = "NAME QUANTITY PRICE";
-        if ( ! validationString.Contains(dataDesignation))
+        if (!validationString.Contains(dataDesignation))
         {
             throw new System.Exception("Must provide valid dataDesignator value: \"NAME\", \"QUANTITY\", or \"PRICE\" are valid.");
         }
@@ -137,7 +144,7 @@ public class Inventory
         for (int w = 0; w < this.width; w++) //product names
         {
             string dataString = "";
-            if (this.inv[w, h].item == null){} //prevents any of the 'else if's from occurring if the target slot is empty.
+            if (this.inv[w, h].item == null) { } //prevents any of the 'else if's from occurring if the target Slot is empty.
             else if (dataDesignation == "NAME")
             {
                 dataString = this.inv[w, h].item.name;

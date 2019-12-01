@@ -35,10 +35,12 @@ public class VendingMachineTests
         //first vending
         Assert.True(machine.vend(0, 1), "Vending first item failed.");
         Assert.True(machine.getDispensedItem().Equals(inv_2x2.peekItem(0, 1)), "Dispensed item did not equal contents at Inventory[0, 1]");
+        Assert.True(machine.getDispensedItem() == null, "dispenserSlot was not nulled after getDispensedItem() called.");
         Assert.True(machine.getHoldingsString() == "$0.01", "Holding expected to be \"$0.01\", instead got " + machine.getHoldingsString());
         //second vending
         Assert.True(machine.vend(0, 1), "Vending second item failed."); //slot [0,1] contains two of item1 which cost 1cent each
         Assert.True(machine.getDispensedItem().Equals(inv_2x2.peekItem(0, 1)), "Dispensed item did not equal contents at Inventory[0, 1]");
+        Assert.True(machine.getDispensedItem() == null, "dispenserSlot was not nulled after getDispensedItem() called.");        
         Assert.True(machine.getHoldingsString() == "$0.00", "Holding expected to be \"$0.00\", instead got " + machine.getHoldingsString());
     }
 

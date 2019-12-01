@@ -31,6 +31,7 @@ namespace VendingProject
         public Dictionary<Currency, int> returnHolding()
         {
             return this.till.returnHolding();
+            //TODO write tests for this. Ensure proper currency is returned.
         }
 
         /*attempts to dispense the item held at [x, y] in the Inventory.
@@ -67,13 +68,13 @@ namespace VendingProject
         /*Sets the quantity of product at the given slot location.*/
         public void setQuantity(int quantity, int x, int y)
         {
-            //TODO after tests
+            this.inventory.setQuantity(quantity, x, y);
         }
 
         /*Clears the given [x,y] slot of product, if any. Sets the slot to the new product at the given quantity*/
         public void setNewProduct(VendingItem newProduct, int quantity, int x, int y)
         {
-            //TODO after tests
+            this.inventory.insertNew(newProduct, quantity, x, y);
         }
 
         /*Clears the contents of the given slot location.*/

@@ -57,11 +57,11 @@ public class VendingMachineTests
     [Fact (DisplayName = "Attempt to vend when exact change cannot be made. Should not vend! Add currency so change can be made, should now vend.")]
     public void attemptToVend_changeCannotBeMade_vendFails_thenAddProperChange_vendSucceeds()
     {
-        Till till = new Till(0, 0, 0, 2, 1); //two quarters, one dollar.
+        Till till = new Till(0, 0, 0, 0, 1); //one dollar.
         VendingMachine machine = new VendingMachine(inv_2x2, till); //reconstruct vendingmachine with new till
         machine.insertCurrency(Currency.DOLLAR, 1); //insert $1
         Assert.False(machine.vend(0,0), "Vending should have failed due to inability to return exact change, but vend() returned true anyway.");
-        machine.insertCurrency(Currency.QUARTER, 1); //machine now holds 3 quarters and two dollars. Exact change can be made
+        machine.insertCurrency(Currency.QUARTER, 3); //machine now holds 3 quarters and two dollars. Exact change can be made
         Assert.True(machine.vend(0,0), "Item should have been able to vend, but it failed to do so.");
     }
 

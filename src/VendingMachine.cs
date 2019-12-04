@@ -31,7 +31,6 @@ namespace VendingProject
         public Dictionary<Currency, int> returnHolding()
         {
             return this.till.returnHolding();
-            //TODO write tests for this. Ensure proper currency is returned.
         }
 
         /*attempts to dispense the item held at [x, y] in the Inventory.
@@ -48,15 +47,16 @@ namespace VendingProject
         /*Returns the item held in dispenserSlot, if any. Sets dispenserSlot to null. */
         public VendingItem getDispensedItem()
         {
-            return dispenserSlot;
-            //TODO after tests are written. DONE. okay to Implement.
+            VendingItem temp = dispenserSlot;
+            dispenserSlot = null;
+            return temp;
         }
 
         /*Returns a string representation of the till's holdings value in the format "$.cc" */
         public string getHoldingsString()
         {
-            return "TODO";
-            //TODO after tests are written. DONE. okay to implement
+            decimal holdings = till.holdings/100.00m; //convert from cents to dollars
+            return holdings.ToString("C"); //"C" specifier converts the decimal to a currency format. Default culture seems to be en-US, so no need to specify currency symbol.
         }
 
         /*Resets the till to its initial state (as though a worker came along, emptied the till, and restocked it to a default setting)*/

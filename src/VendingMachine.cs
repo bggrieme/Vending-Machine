@@ -4,7 +4,7 @@ namespace VendingProject
 {
     public class VendingMachine
     {
-        private string displayMessage, displayHoldings;
+        private string displayMessage;
         private Till till;
         private Inventory inventory;
         public VendingItem dispenserSlot;
@@ -33,15 +33,40 @@ namespace VendingProject
             return this.till.returnHolding();
         }
 
-        /*attempts to dispense the item held at [x, y] in the Inventory.
-        If till holdings >= item value, and
-        if change can be made after the chosen item is vended, and
-        if the dispenserSlot is empty,
-        the selected item will be dispensed to the dispenserSlot and this method will return true*/
+        /*Attempts to dispense the item held at [x, y] in the Inventory.
+        if the targeted slot is not empty or out of stock, the user has inserted enough money, exact change can be made post-purchase, and the dispenserSlot is ready to receive items,
+        then this method will set the dispenserSlot to the targeted item and return true.*/
         public bool vend(int x, int y)
         {
-            return false;
-            //TODO after tests are written. DONE. okay to Implement.
+            Slot targetSlot = inventory.peekSlot(x, y);
+            if (targetSlot.item == null)
+            {
+                this.displayMessage = "Error: Given location holds no item to vend.";
+                return false;
+            }
+            if (targetSlot.quantity <= 0)
+            {
+                this.displayMessage = "Error: Selected item is out of stock.";
+                return false;
+            }
+            if (this.till.holdings < (int)(targetSlot.item.price*100)) //convert item price from fractional dollars to whole cents in integer form
+            {
+                this.displayMessage = "Error: Insufficient funds.";
+                return false;
+            }
+            if ( ! this.till.canMakeChange(this.till.holdings - (int)(targetSlot.item.price*100)))
+            {
+                this.displayMessage = "Error: Insufficient funds in bank to make change if item were purchased.";
+                return false;
+            }
+            if (this.dispenserSlot != null)
+            {
+                this.displayMessage = "Error: Object detected in dispenser slot.";
+                return false;
+            }
+            this.dispenserSlot = this.inventory.dispense(x, y);
+            this.till.spend((int)(targetSlot.item.price*100));
+            return true;
         }
 
         /*Returns the item held in dispenserSlot, if any. Sets dispenserSlot to null. */
@@ -82,22 +107,5 @@ namespace VendingProject
         {
             this.inventory.clearSlot(x, y);
         }
-
-        //TODO: what does the vending machine have to do?
-        // accept currency
-        // return currency
-        // given keypad input, attempt to vend the related item
-        //check if holdings >= item value
-        //check if change can be made if the chosen item is vended
-        //check if dispenserSlot is empty
-        //communicate the results of these checks via displayMessage
-        //if successful, set dispenserSlot (vend)
-        // get current holdings as string in "$.cc" format
-        // clear dispenserSlot
-        // reset till
-        // adjust slot quantity
-        // change inventory slot
-
-
     }
 }

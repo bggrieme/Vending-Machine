@@ -103,9 +103,9 @@ public class Inventory
         inv[x, y].quantity = quantity;
     }
 
-    /*Produces a text-based graphical representation of the given inventory Slot.
-    Really only intended for demo purposes.*/
-    public string stringGUI(int cellWidth = 12)
+    /*Produces a text-based representation of the Inventory. Argument cellWidth determines how many characters wide a cell can be.
+    Only intended for demo purposes.*/
+    public string stringUI(int cellWidth = 12)
     {
         string s_inv = "";
         for (int i = 0; i <= (cellWidth - 1) * this.width; i++) //top border
@@ -114,9 +114,9 @@ public class Inventory
         }
         for (int h = this.height - 1; h >= 0; h--)
         {
-            stringGUI_buildRow(ref s_inv, cellWidth, h, "NAME");
-            stringGUI_buildRow(ref s_inv, cellWidth, h, "QUANTITY");
-            stringGUI_buildRow(ref s_inv, cellWidth, h, "PRICE");
+            stringUI_buildRow(ref s_inv, cellWidth, h, "NAME");
+            stringUI_buildRow(ref s_inv, cellWidth, h, "QUANTITY");
+            stringUI_buildRow(ref s_inv, cellWidth, h, "PRICE");
             s_inv += "\n|";
             for (int w = 0; w < this.width; w++) //Slot grid location
             {
@@ -133,12 +133,13 @@ public class Inventory
         return s_inv;
     }
 
-    private void stringGUI_buildRow(ref string s_inv, int cellWidth, int h, string dataDesignation)
+    /*Builds a string representation of a row of the inventory. Stores that representation in the referenced string s_inv.*/
+    private void stringUI_buildRow(ref string s_inv, int cellWidth, int h, string dataDesignation)
     {
         string validationString = "NAME QUANTITY PRICE";
         if (!validationString.Contains(dataDesignation))
         {
-            throw new System.Exception("Must provide valid dataDesignator value: \"NAME\", \"QUANTITY\", or \"PRICE\" are valid.");
+            throw new System.Exception("Must provide valid dataDesignation value: \"NAME\", \"QUANTITY\", or \"PRICE\" are valid.");
         }
         s_inv += "\n|";
         for (int w = 0; w < this.width; w++) //product names

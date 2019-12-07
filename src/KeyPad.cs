@@ -13,6 +13,7 @@ public class KeyPad
         else { this.options = new string[1]; }
     }
 
+    /*Moves the cursor based on the passed arrow key argument.*/
     public void moveSelection(ConsoleKey key)
     {
         switch (key)
@@ -32,32 +33,81 @@ public class KeyPad
         }
     }
 
+    /*Prints a text-based display of the keypad and its current cursor position.*/
     public void printDisplay(ConsoleColor backgroundColor = ConsoleColor.DarkGreen)
     {
         //print numpad 1-9
-        //print zeroBar
+        for (int y = 2; y >= 0; y--)
+        {
+            for (int x = 0; x <= 2; x++)
+            {
+                int currentNum = 3 * y + (x + 1);
+                Console.Write("[");
+                if (cursor == currentNum) { Console.BackgroundColor = backgroundColor; }
+                Console.Write(currentNum);
+                Console.ResetColor();
+                Console.Write("] ");
+            }
+            Console.WriteLine();
+        }
+        //print 0 bar
+        Console.Write("[");
+        if (cursor == 0) { Console.BackgroundColor = backgroundColor; }
+        Console.Write(zeroBar);
+        Console.ResetColor();
+        Console.Write("]\n");
         //print options
+        if (options[0] != null && options.Length > 0)
+        {
+            char ch = 'A';
+            for (int i = 0; i < this.options.Length; i++)
+            {
+                if (cursor == (-i - 1)) { Console.BackgroundColor = backgroundColor; }
+                Console.Write((char)(ch + i));
+                Console.ResetColor();
+                Console.WriteLine(": " + options[i]);
+            }
+        }
     }
 
+    /*Movest he cursor left. Wrapping numpad 1-9 horizontally and doing nothing when cursor is <= 0*/
     private void moveLeft()
     {
-        //TODO
+        if (cursor > 0)
+        {
+            if (cursor == 7) { cursor = 9; }
+            else if (cursor == 4) { cursor = 6; }
+            else if (cursor == 1) { cursor = 3; }
+            else { cursor--; }
+        }
     }
 
+    /*Movest he cursor right. Wrapping numpad 1-9 horizontally and doing nothing when cursor is <= 0*/
     private void moveRight()
     {
-        //TODO
+        if (cursor > 0)
+        {
+            if (cursor == 9) { cursor = 7; }
+            else if (cursor == 6) { cursor = 4; }
+            else if (cursor == 3) { cursor = 1; }
+            else { cursor++; }
+        }
     }
 
+    /*Moves cursor up. Does nothing if cursor >= 7*/
     private void moveUp()
     {
-        //TODO
+        if (cursor < 7 && cursor > 0) { cursor += 3; }
+        else if (cursor == 0) { cursor = 2; }
+        else if (cursor < 0) { cursor++; }
     }
 
+    /*Moves cursor down. Does nothing if cursor is at 0 with no options or at bottom option if options were included.*/
     private void moveDown()
     {
-        //TODO
+        if (cursor < 0 && cursor > -options.Length) { cursor--; }
+        else if (cursor == 0 && this.options[0] != null) { cursor--; }
+        else if (cursor > 0 && cursor < 4) { cursor = 0; }
+        else if (cursor >= 4) { cursor -= 3; }
     }
-
-
 }

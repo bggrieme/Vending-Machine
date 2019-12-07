@@ -12,5 +12,6 @@
     <Content Include="VendingMachine.cs" />
     <Content Include="VendingItem.cs" />
     <Content Include="Slot.cs" />
+    <Content Include="KeyPad.cs" />
   </ItemGroup>
 </Project>

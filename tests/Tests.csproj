@@ -14,5 +14,6 @@
     <Content Include="TillTests.cs" />
     <Content Include="VendingMachineTests.cs" />
     <Content Include="InventoryTests.cs" />
+    <Content Include="KeyPadTests.cs" />
   </ItemGroup>
 </Project>

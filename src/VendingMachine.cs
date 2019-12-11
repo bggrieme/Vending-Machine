@@ -4,11 +4,11 @@ namespace VendingProject
 {
     public class VendingMachine
     {
-        private const string displayMessage_DEFAULT = "Welcome! Please insert currency, then choose a product."; //commit - added default display message
+        private const string displayMessage_DEFAULT = "Welcome! Please insert currency, then choose a product.";
         private Till till;
         private Inventory inventory;
         private VendingItem dispenserSlot;
-        public string displayMessage {get; private set;} //commit - private to public get / private set
+        public string displayMessage {get; private set;}
 
 
         public VendingMachine(Inventory givenInventory, Till givenTill)
@@ -112,7 +112,7 @@ namespace VendingProject
             this.inventory.clearSlot(x, y);
         }
 
-        public string inventoryUI(int cellWidth) //commit - added holdings, dispensed item, and displayMessage information to UI string
+        public string inventoryUI(int cellWidth) //TODO consider refactoring to something more meaningful.. perhaps something like get_UI_string() ?
         {
             string vendingUI = inventory.stringUI(cellWidth);
             vendingUI += "\nCurrent Holdings: " + this.getHoldingsString() + "\nDispenser contents: ";

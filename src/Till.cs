@@ -1,3 +1,7 @@
+/*Author: Ben Grieme - 2019
+    About this class: This class represents the currency storage system in a vending machine or other entity that takes and tracks currency. 
+    It keeps track of a several types of banks as well as a value representing a customer's inserted currency to be spent.*/
+
 using System; //Enum.
 using System.Collections.Generic; //dictionary
 
@@ -23,11 +27,11 @@ public class Till
         }
     }
 
-    /*Resets the bank to the originally constructed defaultBank, zeroes holdings*/
+    /*Resets the bank to the originally constructed values and zeroes holdings*/
     public void resetBank()
     {
         this.bank = this.defaultBank;
-        holdings = 0;
+        this.holdings = 0;
     }
 
     /*Adds the given currency to till's bank. Increases the till's holdings value appropriately.*/

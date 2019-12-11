@@ -1,4 +1,8 @@
-using System.Collections.Generic;
+/*Author: Ben Grieme - 2019
+    About this class: This class attempts to model the inventory of a common vending machine. 
+    This is achieved by representing a single product space as a Slot object which contains a single instance of a VendingItem, and an integer which represents the quantity of that item.
+    The data structure is a simple 2-D array - this structure was chosen because of its similarity with real-life vending machines.
+        Furthermore, most vending machines use a grid system to enable product selection (e.g. - entering 0, 0 or A, 0 may select the bottom left-most slot. Similarly, selecting indices 0, 0 of a 2-D array will select the bottom left-most slot) */
 
 public class Inventory
 {

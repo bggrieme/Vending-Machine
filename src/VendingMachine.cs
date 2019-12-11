@@ -1,3 +1,6 @@
+/*Author: Ben Grieme - 2019
+    About this class: This class integrates Inventory and Till systems into a single VendingMachine entity.
+    This is a pretty simple and straightforward class. Most of its methods are simply calls to methods of its Till and/or Inventory components.*/
 using System.Collections.Generic; //dictionary
 
 namespace VendingProject
@@ -15,13 +18,13 @@ namespace VendingProject
         {
             this.till = givenTill;
             this.inventory = givenInventory;
-            displayMessage = displayMessage_DEFAULT;
+            this.displayMessage = displayMessage_DEFAULT;
         }
 
         /*Returns the Slot object held at the given inventory coordinates.*/
         public Slot peekSlot(int x, int y)
         {
-            return inventory.peekSlot(x, y);
+            return this.inventory.peekSlot(x, y);
         }
 
         /*Inserts the given currency in the given quantity into the VendingMachine's Till for spending*/
@@ -68,7 +71,7 @@ namespace VendingProject
                 return false;
             }
             this.dispenserSlot = this.inventory.dispense(x, y);
-            this.till.spend((int)(targetSlot.item.price * 100));
+            this.till.spend( (int)(targetSlot.item.price * 100) );
             this.displayMessage = displayMessage_DEFAULT;
             return true;
         }
@@ -91,7 +94,7 @@ namespace VendingProject
         /*Resets the till to its initial state (as though a worker came along, emptied the till, and restocked it to a default setting)*/
         public void resetTill()
         {
-            till.resetBank();
+            this.till.resetBank();
         }
 
         /*Sets the quantity of product at the given slot location.*/
@@ -114,7 +117,8 @@ namespace VendingProject
 
         public string inventoryUI(int cellWidth) //TODO consider refactoring to something more meaningful.. perhaps something like get_UI_string() ?
         {
-            string vendingUI = inventory.stringUI(cellWidth);
+            //TODO: add an output showing the contents of the Till for demo purposes. Maybe format the holdings, dispenser, and bank contents to look ~*pretty*~
+            string vendingUI = this.inventory.stringUI(cellWidth);
             vendingUI += "\nCurrent Holdings: " + this.getHoldingsString() + "\nDispenser contents: ";
             if (this.dispenserSlot != null)
             {

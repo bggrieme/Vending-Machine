@@ -1,3 +1,6 @@
+/*Author: Ben Grieme - 2019
+    About this class: This is entirely an user-interface class. In order to demonstrate my VendingMachine project, I needed some way for an user to interact with it and give input.
+    As such, I could either allow the user to type in input and then go through the mess of validating that input, or I could simply control their means of input - this class is a way to control input.*/
 using System;
 
 public class KeyPad

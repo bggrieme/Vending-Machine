@@ -1,3 +1,7 @@
+/*Author: Ben Grieme - 2019
+    About this class: This class represents a product for sale. It stores a product name and a price.
+    For an explanation on why this is the only entity throughout the entire project to represent monetary values as decimal instead of int, please see the "About this class" comment in Currency.cs*/
+
 using System; //Decimal.Round
 
 public class VendingItem

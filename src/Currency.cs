@@ -5,7 +5,7 @@
     As I discovered, they cannot contain non-integral values - hence the primary reason why monetary values are mostly stored as ints instead of as decimal throughout most of this project.
     I took this as a good opportunity to experiment with loss-less conversions between decimal types and int types.*/
 
-/*Enum representing values of different US currencies in cents*/
+/*Enum representing values of different U.S. currencies in cents*/
 public enum Currency
 {
     PENNY = 1,

@@ -13,7 +13,7 @@ namespace VendingProject
             string[] options = {"Retrieve vended item", "Insert penny", "Insert nickel", "Insert dime", "Insert quarter", "Insert dollar", "Insert two dollars", "Return holdings"};
             KeyPad keyPad = new KeyPad(options);
             Inventory inv_3x5 = new Inventory(3, 5, getInitialItems());
-            Till till_300 = new Till(300, 60, 30, 12, 3);
+            Till till_300 = new Till(0, 0, 9, 0, 3);
             VendingMachine machine = new VendingMachine(inv_3x5, till_300);            
             ConsoleKey key;
             int x, y;
@@ -87,7 +87,7 @@ namespace VendingProject
         private static void update(ref VendingMachine machine, ref KeyPad keyPad)
         {
             Console.Clear();//clear screen
-            Console.WriteLine(machine.inventoryUI(15)); //draw current inventory
+            Console.WriteLine(machine.get_UI_string(15)); //draw current inventory
             keyPad.printDisplay();//draw current keypad
         }
 
@@ -107,7 +107,7 @@ namespace VendingProject
             Slot slot11 = new Slot(new VendingItem("AlmondJoy", 1m), 15);
             Slot slot12 = new Slot(new VendingItem("Mounds", 1m), 15);
             Slot slot13 = new Slot(new VendingItem("RingPop", 1m), 10);
-            Slot slot14 = new Slot(new VendingItem("FunDip", 1m), 10);
+            Slot slot14 = new Slot(new VendingItem("FunDip", 1m), 1);
             Slot slot15 = new Slot(new VendingItem("Bag O' Air", 0m), 99999);
             Slot[] items = { slot1, slot2, slot3, slot4, slot5, slot6, slot7, slot8, slot9, slot10, slot11, slot12, slot13, slot14, slot15 };
             return items;

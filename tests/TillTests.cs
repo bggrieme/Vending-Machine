@@ -59,7 +59,7 @@ public class TillTests
         Assert.True(till.bank[Currency.QUARTER] == 1 && till.holdings == 25);
     }
 
-    /*attempts to add one of each type of Currency (minus PENNY, because the till can always "make change" for an inserted penny) to till, which should fail due to till.bank being completely empty.*/
+    /*canMakeChange() should return false for each currency value due to an empty bank.*/
     [Theory (DisplayName = "Should be unable to make change because the bank is empty.")]
     [InlineData (Currency.PENNY)]
     [InlineData (Currency.NICKEL)]

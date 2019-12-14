@@ -11,8 +11,7 @@ namespace VendingProject
         private Till till;
         private Inventory inventory;
         private VendingItem dispenserSlot;
-        public string displayMessage {get; private set;}
-
+        public string displayMessage { get; private set; }
 
         public VendingMachine(Inventory givenInventory, Till givenTill)
         {
@@ -71,7 +70,7 @@ namespace VendingProject
                 return false;
             }
             this.dispenserSlot = this.inventory.dispense(x, y);
-            this.till.spend( (int)(targetSlot.item.price * 100) );
+            this.till.spend((int)(targetSlot.item.price * 100));
             this.displayMessage = displayMessage_DEFAULT;
             return true;
         }
@@ -115,17 +114,92 @@ namespace VendingProject
             this.inventory.clearSlot(x, y);
         }
 
-        public string inventoryUI(int cellWidth) //TODO consider refactoring to something more meaningful.. perhaps something like get_UI_string() ?
+        /*Returns a text-based representation of the vending machine, intended as a basic user interface.
+        Please note: in my opinion, there is a lot of dirt and duct tape in this method and its helper methods. 
+        It isn't intended to be an example of my best work, it only exists as a means to quickly interact with and observe what I've created.*/
+        public string get_UI_string(int cellWidth)
         {
-            //TODO: add an output showing the contents of the Till for demo purposes. Maybe format the holdings, dispenser, and bank contents to look ~*pretty*~
-            string vendingUI = this.inventory.stringUI(cellWidth);
-            vendingUI += "\nCurrent Holdings: " + this.getHoldingsString() + "\nDispenser contents: ";
-            if (this.dispenserSlot != null)
+            int cells_wide = inventory.width; //number of cells (vending Slots) in a row of the inventory
+            string vendingUI = this.inventory.stringUI(cellWidth) + "\n";
+            int rowLength = 60; //determines the width of the box that appears underneath the Inventory UI.
+            for (int i = 0; i <= rowLength; i++) //top border
             {
-                vendingUI+= this.dispenserSlot.name;
-            } 
+                vendingUI += "*";
+            }
+            vendingUI += "\n";
+            string[] row_left = { "Holdings : " + this.getHoldingsString() }; //the tokens to be printed ont he left side
+            string row_right = "~ Dispenser ~"; //token to be printed on the right side
+            UI_Row_Builder(ref vendingUI, rowLength, ':', row_left, row_right, "LEFT");
+            UI_Row_Builder(ref vendingUI, rowLength, ' ', null); //blank line with border chars in place
+            row_left = new string[] { "~ Machine Bank Contents ~" };
+            row_right = (dispenserSlot != null) ? dispenserSlot.name : "";
+            UI_Row_Builder(ref vendingUI, rowLength, ' ', row_left, row_right);
+            row_left = new string[] { "Pennies", "Nickels", "Dimes", "Quarters", "Dollars" };
+            UI_Row_Builder(ref vendingUI, rowLength, '|', row_left);
+            row_left = new string[] { till.bank[Currency.PENNY].ToString(), till.bank[Currency.NICKEL].ToString(), till.bank[Currency.DIME].ToString(), till.bank[Currency.QUARTER].ToString(), till.bank[Currency.DOLLAR].ToString(), };
+            UI_Row_Builder(ref vendingUI, rowLength, '|', row_left);
+            for (int i = 0; i <= rowLength; i++) //bottom border
+            {
+                vendingUI += "*";
+            }
             vendingUI += "\n" + this.displayMessage;
             return vendingUI;
+        }
+
+        /*Modifies the given UI_string to add a UI row based on the given parameters.
+        rowLength: Determines how many characters long a row will be.
+        tokenDelimiter: sets the character to be used to separate the members of left_tokens
+        left_tokens: an array of strings to be included on the left section of the UI string
+        right_token: If given, this string will be included on the right section of the UI string
+        leftSideAlignment: must be either LEFT, RIGHT, or CENTER. Determines the justification of the left side tokens.
+        rightSideAlignment: must be either LEFT, RIGHT, or CENTER. Determines the justification of the right side token.
+        borderChar: Sets the character to be used for the UI border*/
+        private void UI_Row_Builder(ref string UI_string, int rowLength, char tokenDelimiter, string[] left_tokens, string right_token = "", string leftSideAlignment = "CENTER", string rightSideAlignment = "CENTER", char borderChar = '*')
+        {
+            if (left_tokens == null)
+            {
+                string[] temp = { "" };
+                left_tokens = temp;
+            }
+            if (right_token == null)
+            {
+                right_token = "";
+            }
+            /*---Left side---*/
+            int space_left = ((rowLength / 3) * 2) - 1; //left side gets 2/3 the total width, -1 due to borderChar taking up a char slot
+            UI_string += borderChar;
+            int spacesPerToken = space_left / left_tokens.Length; //total space / number of tokens
+            int spacesRemainder = space_left % left_tokens.Length;
+            for (int i = 0; i < left_tokens.Length; i++) //trim and align each token as necessary, add delimiting char to tokens as necessary
+            {
+                if (spacesRemainder > 0) //distributes extra spaces among the tokens to ensure aligned columns
+                {
+                    trim_and_justify(ref left_tokens[i], spacesPerToken + 1, tokenDelimiter, leftSideAlignment, (i < left_tokens.Length - 1));
+                    spacesRemainder--;
+                    continue;
+                }
+                trim_and_justify(ref left_tokens[i], spacesPerToken, tokenDelimiter, leftSideAlignment, (i < left_tokens.Length - 1));
+            }
+            foreach (string s in left_tokens)
+            {
+                UI_string += s;
+            }
+            UI_string += borderChar;
+            /*---Right side---*/
+            int space_right = (rowLength / 3) - 1; //right side gets 1/3 the total width, -1 due to borderChar taking up a char slot
+            trim_and_justify(ref right_token, space_right, ' ', rightSideAlignment, false);
+            UI_string += right_token + borderChar;
+            UI_string += "\n";
+        }
+
+        /*Trims the given token if needed, justifies it based on the given justifcation LEFT, RIGHT, or CENTER. Adds a delimiter character to the token if delimit == true*/
+        private void trim_and_justify(ref string token, int spacesPerToken, char tokenDelimiter, string justification = "CENTER", bool delimit = false)
+        {
+            token = (token.Length > spacesPerToken) ? token.Substring(0, spacesPerToken) : token; //trim token, if necessary
+            token = (justification == "LEFT") ? token.PadRight(spacesPerToken) : token; //Align left, if that is chosen alignment
+            token = (justification == "RIGHT") ? token.PadLeft(spacesPerToken) : token; //Align right, if that is chosen alignment
+            token = (justification == "CENTER") ? token.PadLeft((spacesPerToken - token.Length) / 2 + token.Length).PadRight(spacesPerToken) : token; //Align center, if that is chosen alignment
+            token = (delimit) ? token.Substring(0, token.Length - 1) + tokenDelimiter : token;
         }
     }
 }
